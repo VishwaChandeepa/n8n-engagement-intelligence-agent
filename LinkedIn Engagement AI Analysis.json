@@ -89,7 +89,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "analysis_date": "={{ $now }}",
-            "posts_analyzed": "=3",
+            "posts_analyzed": "={{ $input.all().length }}",
             "full_analysis": "={{ $json.output }}"
           },
           "matchingColumns": [],
