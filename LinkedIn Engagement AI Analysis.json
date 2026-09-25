@@ -6,10 +6,9 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "bnZXOBS94tEkkBxT",
+          "value": "YOUR_LINKEDIN_POST_DATA_TABLE_ID",
           "mode": "list",
-          "cachedResultName": "linkedin_post_engagement",
-          "cachedResultUrl": "/projects/bYr1snOte38CivvH/datatables/bnZXOBS94tEkkBxT"
+          "cachedResultName": "linkedin_post_engagement"
         }
       },
       "type": "n8n-nodes-base.dataTable",
@@ -76,22 +75,15 @@
         352
       ],
       "id": "51a75404-b003-4a27-ac42-122664a79a2e",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "wnF794ukon5SUZPZ",
-          "name": "Google Gemini(PaLM) Api account 3"
-        }
-      }
+      "name": "Google Gemini Chat Model"
     },
     {
       "parameters": {
         "dataTableId": {
           "__rl": true,
-          "value": "Naagb1fgYMHAhzFU",
+          "value": "YOUR_ANALYSIS_DATA_TABLE_ID",
           "mode": "list",
-          "cachedResultName": "linkedin_engagement_analysis",
-          "cachedResultUrl": "/projects/bYr1snOte38CivvH/datatables/Naagb1fgYMHAhzFU"
+          "cachedResultName": "linkedin_engagement_analysis"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -175,7 +167,7 @@
         -240
       ],
       "id": "a5026fc3-ee2a-4fbd-b436-a445d6469348",
-      "name": "Daily Engagement Analysis Trigge"
+      "name": "Daily Engagement Analysis Trigger"
     }
   ],
   "pinData": {},
@@ -246,7 +238,7 @@
         ]
       ]
     },
-    "Daily Engagement Analysis Trigge": {
+    "Daily Engagement Analysis Trigger": {
       "main": [
         [
           {
@@ -257,19 +249,11 @@
         ]
       ]
     }
-  },
-  "active": true,
+  ],
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "8bca6173-996b-4921-963c-1f41b43fd014",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "47fee79f797cbd62499c5b9656996086b5143ff41a1b69af9402d5f6b6fa9f99"
-  },
-  "nodeGroups": [],
-  "id": "iBIyimmHcxDP0NXi",
   "tags": []
 }
