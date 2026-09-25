@@ -1,0 +1,275 @@
+{
+  "name": "LinkedIn Engagement AI Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "bnZXOBS94tEkkBxT",
+          "mode": "list",
+          "cachedResultName": "linkedin_post_engagement",
+          "cachedResultUrl": "/projects/bYr1snOte38CivvH/datatables/bnZXOBS94tEkkBxT"
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1056,
+        -240
+      ],
+      "id": "e287ac51-699c-4ed8-9254-e8ad87cb26b6",
+      "name": "Get LinkedIn Posts"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    post_text: item.json.post_text,\n    posted_at: item.json.posted_at,\n    likes: Number(item.json.likes || 0),\n    comments: Number(item.json.comments || 0),\n    shares: Number(item.json.shares || 0)\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        64
+      ],
+      "id": "2ae40848-715c-4b8a-bc4c-11c7f492a11a",
+      "name": "Prepare Post Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const likes = Number(item.json.likes || 0);\n  const comments = Number(item.json.comments || 0);\n  const shares = Number(item.json.shares || 0);\n  const postText = item.json.post_text || \"\";\n\n  return {\n    json: {\n      post_text: postText,\n      posted_at: item.json.posted_at,\n      likes: likes,\n      comments: comments,\n      shares: shares,\n      total_engagement: likes + comments + shares,\n      post_length: postText.length\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        64
+      ],
+      "id": "12cb3785-93bf-4e7d-918c-470845648787",
+      "name": "Calculate Engagement Metrics"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the LinkedIn engagement data provided below.\n\nFor each LinkedIn post:\n\n1. Summarize the post.\n2. Report its likes, comments, and shares.\n3. Calculate total visible interactions as:\n   likes + comments + shares\n4. Compare the posts using the available engagement data.\n5. Identify noticeable content patterns.\n6. Give practical recommendations for future LinkedIn posts.\n\nImportant:\n\n* Use only the data provided.\n* Do not invent impressions, reach, engagement rate, or other missing metrics.\n* If a metric is not provided, say that it is unavailable.\n* These posts may be very recent, so avoid making strong conclusions from very small engagement numbers.\n\nReturn the analysis using these sections:\n\nOverall Summary\n\nPost-by-Post Analysis\n\nEngagement Patterns\n\nRecommendations\n\nHere is the actual LinkedIn data:\n{{ JSON.stringify($input.all().map(item => item.json)) }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1200,
+        64
+      ],
+      "id": "85eeb1b9-6d4d-496d-9f47-ef1223619b49",
+      "name": "AI Engagement Analysis",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        352
+      ],
+      "id": "51a75404-b003-4a27-ac42-122664a79a2e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wnF794ukon5SUZPZ",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "Naagb1fgYMHAhzFU",
+          "mode": "list",
+          "cachedResultName": "linkedin_engagement_analysis",
+          "cachedResultUrl": "/projects/bYr1snOte38CivvH/datatables/Naagb1fgYMHAhzFU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "analysis_date": "={{ $now }}",
+            "posts_analyzed": "=3",
+            "full_analysis": "={{ $json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "analysis_date",
+              "displayName": "analysis_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "posts_analyzed",
+              "displayName": "posts_analyzed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "full_analysis",
+              "displayName": "full_analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        496
+      ],
+      "id": "95351d77-d2b0-490d-ba6a-3ca9605a55ce",
+      "name": "Save Engagement Analysis"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        624,
+        496
+      ],
+      "id": "64bf82c7-e501-404f-b543-cadee0417749",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        -240
+      ],
+      "id": "a5026fc3-ee2a-4fbd-b436-a445d6469348",
+      "name": "Daily Engagement Analysis Trigge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get LinkedIn Posts": {
+      "main": [
+        [
+          {
+            "node": "Prepare Post Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Post Data": {
+      "main": [
+        [
+          {
+            "node": "Calculate Engagement Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Engagement Metrics": {
+      "main": [
+        [
+          {
+            "node": "AI Engagement Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Engagement Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Engagement Analysis": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Save Engagement Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Engagement Analysis Trigge": {
+      "main": [
+        [
+          {
+            "node": "Get LinkedIn Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "8bca6173-996b-4921-963c-1f41b43fd014",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "47fee79f797cbd62499c5b9656996086b5143ff41a1b69af9402d5f6b6fa9f99"
+  },
+  "nodeGroups": [],
+  "id": "iBIyimmHcxDP0NXi",
+  "tags": []
+}
